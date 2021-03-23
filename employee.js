@@ -48,16 +48,36 @@ const showEmployees = () => {
                     });
                     return employeeArray;
                 },
-                message: 'Select an employee'
+                message: 'Select an employee',
+                
             },
         ])
     });
     
 };
 
-// const showEmployeesByDep = () => {
+const showEmployeesByDep = () => {
+    connection.query('SELECT * FROM department', (err, results) => {
+        if (err) throw err;
+        inquirer
+        .prompt([
+            {
+                name: 'choice',
+                type: 'list',
+                choices() {
+                    const departmentArray = [];
+                    results.forEach(({departmentName}) => {
+                        departmentArray.push(departmentName);
+                    });
+                    return departmentArray;
+                },
+                message: 'Select a department',
+                
+            },
+        ])
+    });
 
-// };
+};
 
 const addEmployee = () => {
     inquirer

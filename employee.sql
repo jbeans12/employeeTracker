@@ -9,17 +9,17 @@ CREATE TABLE employee (
   first_name VARCHAR(30) NOT NULL,
   last_name VARCHAR(30) NOT NULL,
   role_id INT (100) NOT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (role_id) REFERENCES Roles(role_id)
+  FOREIGN KEY (role_id) REFERENCES roles (id),
+  PRIMARY KEY (id)
 );
 
 CREATE TABLE rolee (
     id INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(30) NOT NULL,
-    salary DECIMAL(10,10) NOT NULL,
-    department_id INT(100) NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (department_id) REFERENCES Departments(department_id)
+    salary DECIMAL NOT NULL,
+    department_id INT,
+    FOREIGN KEY (department_id) REFERENCES departments(id),
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE department (

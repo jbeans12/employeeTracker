@@ -9,7 +9,7 @@ const connection = mysql.createConnection({
   database: 'employeeT_db',
 });
 
-const init = () => {
+const start = () => {
     inquirer
     .prompt([
         {
@@ -29,10 +29,31 @@ const init = () => {
             addEmployee();
         } else if (userChoice.choice === 'Update Employee Role') {
             updateRole();
+        } else {
+            connection.end();
         }
-    })
-}
+    });
+};
+
 const showEmployees = () => {
+    connection.query('SELECT * FROM employee', (err, results) => {
+        if (err) throw err;
+        inquirer
+        .prompt([
+            {
+                name: 'choice',
+                type: 'rawlist',
+                choices() {
+                    const employeeArray = [];
+                    results.forEach(({first_name, last_name}) => {
+                        employeeArray.push(first_name, last_name);
+                    });
+                    return employeeArray;
+                },
+                message: 'Select an employee',
+            },
+        ])
+    })
     
 };
 
@@ -41,7 +62,45 @@ const showEmployeesByDep = () => {
 };
 
 const addEmployee = () => {
-
+    inquirer
+    .prompt([
+        {
+            name: 'firstName',
+            type: 'input',
+            message: 'What is the new employees first name?',
+        },
+        {
+            name: 'lastName',
+            type: 'input',
+            message: 'What is the employees last name?',
+        },
+        { 
+            name: 'role',
+            type: 'input',
+            message: 'What is the new employees role?',
+            validate(value) {
+                if (isNaN(value) === false) {
+                    return true;
+                }
+                    return false;
+            },
+        },
+    ])
+    .then((answer) => {
+        connection.query(
+            'INSERT INTO employee SET ?',
+            {
+             first_name: answer.firstName,
+             last_name: answer.lastName,
+             role_id: answer.roleId,
+            },
+            (err) => {
+                if (err) throw err;
+                console.log('New Employee Added Sucessfully!');
+                start();
+            }
+          );
+        });
 };
 
 const updateRole = () => {
@@ -52,7 +111,5 @@ const updateRole = () => {
 connection.connect((err) => {
     if (err) throw err;
     console.log(`connected as id ${connection.threadId}\n`);
-  
-    init();
-    
-  })
+    start(); 
+  });

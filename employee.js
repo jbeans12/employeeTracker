@@ -6,21 +6,19 @@ const connection = mysql.createConnection({
   port: 3306,
   user: 'root',
   password: 'password',
-  database: 'employeeT_db',
+  database: 'employeeT_DB',
 });
+
 
 const start = () => {
     inquirer
-    .prompt([
-        {
+    .prompt({
             type: 'list',
             message: 'What would you like to do?',
             name: 'choice',
-            choices: ['View All Employees', 'View All Employees By Department', 'Add Employee', 'Update Employee Role'],
-            
-        }
-    ])
-    .then(userChoice => {
+            choices: ['View All Employees', 'View All Employees By Department', 'Add Employee', 'Update Employee Role', 'EXIT'],
+        })
+    .then((userChoice) => {
         if (userChoice.choice === 'View All Employees') {
             showEmployees();
         } else if (userChoice.choice === 'View All Employees By Department') {
@@ -42,7 +40,7 @@ const showEmployees = () => {
         .prompt([
             {
                 name: 'choice',
-                type: 'rawlist',
+                type: 'list',
                 choices() {
                     const employeeArray = [];
                     results.forEach(({first_name, last_name}) => {
@@ -50,16 +48,16 @@ const showEmployees = () => {
                     });
                     return employeeArray;
                 },
-                message: 'Select an employee',
+                message: 'Select an employee'
             },
         ])
-    })
+    });
     
 };
 
-const showEmployeesByDep = () => {
+// const showEmployeesByDep = () => {
 
-};
+// };
 
 const addEmployee = () => {
     inquirer
@@ -68,22 +66,40 @@ const addEmployee = () => {
             name: 'firstName',
             type: 'input',
             message: 'What is the new employees first name?',
+            validate: value => {
+                if (value) {
+                    return true;
+                } else {
+                    console.log(`A name must be entered`)
+                    return false;
+                }
+            }
         },
         {
             name: 'lastName',
             type: 'input',
             message: 'What is the employees last name?',
+            validate: value => {
+                if (value) {
+                    return true;
+                } else {
+                    console.log(`A name must be entered`)
+                    return false;
+                }
+            }
         },
         { 
             name: 'role',
             type: 'input',
             message: 'What is the new employees role?',
-            validate(value) {
-                if (isNaN(value) === false) {
+            validate: value => {
+                if (value) {
                     return true;
-                }
+                } else {
+                    console.log(`A role must be entered`)
                     return false;
-            },
+                }
+            }
         },
     ])
     .then((answer) => {
@@ -103,13 +119,12 @@ const addEmployee = () => {
         });
 };
 
-const updateRole = () => {
+// const updateRole = () => {
 
-};
+// };
 
 
 connection.connect((err) => {
     if (err) throw err;
-    console.log(`connected as id ${connection.threadId}\n`);
     start(); 
   });
